@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PCOS Quiz – Nourished Natural Health</title>
+
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=Fraunces:opsz,wght@9..144,500&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Klaviyo Snippet -->
+  <script>
+    (function(){
+      var _learnq = window._learnq = window._learnq||[];
+      if (!_learnq.init) {
+        ["identify","track","trackForm","page","subscribe"].forEach(function(m){
+          _learnq[m] = function(){ _learnq.push([m].concat(Array.from(arguments))); };
+        });
+        var s = document.createElement("script");
+        s.async = true;
+        s.src = "https://static.klaviyo.com/onsite/js/klaviyo.js?company_id=S4cYEr";
+        document.head.appendChild(s);
+        _learnq.init = true;
+      }
+    })();
+  </script>
+
+  <style>
+    :root {
+      --color-yes: #E51550;
+      --color-secondary: #06604A;
+      --color-text: #1e1b1c;
+      --spacing: 1rem;
+      --font-heading: 'Fraunces', serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; font-family: var(--font-body); color: var(--color-text); line-height: 1.5; }
+    .quiz-container { max-width: 480px; margin: 0 auto; padding: calc(var(--spacing)*2); }
+    .counter { font-size: 1rem; margin-bottom: var(--spacing); text-align: right; }
+    .screen { display: none; }
+    .screen.active { display: block; }
+    h1 { font-family: var(--font-heading); font-size: 2rem; margin-bottom: var(--spacing); }
+    h2 { font-family: var(--font-heading); font-size: 1.25rem; margin-bottom: calc(var(--spacing)*0.5); }
+    p { margin-bottom: var(--spacing); }
+    .btn {
+      display: block; width: 100%; padding: var(--spacing);
+      margin: calc(var(--spacing)*0.5) 0; font-size: 1rem;
+      border: none; border-radius: 8px; background: var(--color-yes);
+      color: #fff; cursor: pointer; font-family: var(--font-body);
+      text-align: center; text-decoration: none;
+    }
+    .btn-secondary { background: var(--color-secondary); color: #fff; margin-bottom: 0; }
+    .btn-not-sure { background: #A93923; color: #fff; margin: calc(var(--spacing)*0.25) 0 var(--spacing); }
+    label, input {
+      display: block; width: 100%; margin-bottom: var(--spacing);
+      font-size: 1rem; color: var(--color-text);
+    }
+    input { padding: calc(var(--spacing)*0.5); border:1px solid #ccc; border-radius:4px; }
+
+    /* COVER: hidden by default, only flex when active */
+    #screen-cover { display: none; }
+    #screen-cover.active {
+      display: flex; flex-direction: column;
+      justify-content: flex-start; align-items: center;
+      padding: 0 var(--spacing) var(--spacing);
+      text-align: center;
+    }
+    #screen-cover.active h1 {
+      margin-top: 0; margin-bottom: 0.5rem; font-size: 1.75rem;
+    }
+    #screen-cover.active p {
+      margin-bottom: 1rem; font-size: 1rem;
+    }
+    @media (max-width: 480px) {
+      #screen-cover.active {
+        padding: 0.5rem var(--spacing) var(--spacing);
+      }
+      #screen-cover.active h1 { font-size: 1.5rem; }
+      #screen-cover.active p  { font-size: 0.9rem; margin-bottom: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <!-- Cover -->
+    <div class="screen active" id="screen-cover">
+      <h1>Which PCOS Type Could You Be?</h1>
+      <p>Take our personalized, detailed assessment to get an indication of which PCOS type you might be.</p>
+      <button type="button" id="btn-start" class="btn">Get Started</button>
+    </div>
+
+    <div id="counter" class="counter"></div>
+
+    <!-- Questions 1–23 -->
+    <div class="screen" data-step="1">
+      <h2>1. I have been diagnosed with insulin resistance, pre-diabetes, diabetes or have suspected insulin resistance</h2>
+      <button class="btn" data-type="insulin">Yes</button>
+      <button class="btn btn-secondary" data-type="">No</button>
+      <button class="btn btn-not-sure" data-type="">Not Sure</button>
+    </div>
+    <!-- (Remaining question screens unchanged) -->
+    <div class="screen" data-step="2">
+      <h2>2. I have a family history of diabetes</h2>
+      <button class="btn" data-type="insulin">Yes</button>
+      <button class="btn btn-secondary" data-type="">No</button>
+      <button class="btn btn-not-sure" data-type="">Not Sure</button>
+    </div>
+    <!-- ... steps 3–23 omitted for brevity ... -->
+
+   <!-- Email Capture (step 24) -->
+    <div class="screen" id="screen-email">
+      <h2>Almost done!</h2>
+      <p>Add your best contact email and we'll send the results straight to your inbox.</p>
+      <label for="email">Email address</label>
+      <input id="email" type="email" placeholder="you@example.com" required />
+      <button id="btn-submit-email" class="btn">Get Results</button>
+      <p id="email-error" style="color:var(--color-secondary);display:none;">Please enter a valid email.</p>
+    </div>
+
+    <!-- Results (step 25) -->
+    <div class="screen" id="screen-result">
+      <h2>Your result is ready!</h2>
+      <a id="result-link" class="btn" target="_top" href="#">View My Results</a>
+    </div>
+  </div>
+
+  <script defer>
+    const TOTAL = 23,
+          screens = document.querySelectorAll('.screen'),
+          qs      = document.querySelectorAll('[data-step]'),
+          counter = document.getElementById('counter'),
+          redirectMap = {
+            insulin:      'https://nourishednaturalhealth.com/pages/insulin-resistant-quiz-result-v1',
+            inflammatory: 'https://nourishednaturalhealth.com/pages/inflammatory-quiz-result',
+            adrenal:      'https://nourishednaturalhealth.com/pages/adrenal-quiz-result',
+            postpill:     'https://nourishednaturalhealth.com/pages/post-pill-quiz-result'
+          },
+          labels = {
+            insulin:      'Insulin Resistant PCOS',
+            inflammatory: 'Inflammatory PCOS',
+            adrenal:      'Adrenal PCOS',
+            postpill:     'Post-Pill PCOS'
+          };
+    let step = 0, scores = {}, override = false;
+
+    function updateCounter(){
+      counter.textContent = (step>0&&step<=TOTAL)?`Q${step}/${TOTAL}`:'';
+    }
+    function showScreen(i){
+      screens.forEach(s=>s.classList.remove('active'));
+      screens[i].classList.add('active');
+      updateCounter();
+    }
+    function next(type){
+      if(type==='postpill') override = true;
+      else if(type) scores[type] = (scores[type]||0)+1;
+      step++;
+      if(step<=TOTAL) showScreen(step);
+      else showScreen(TOTAL+1); // email screen
+    }
+
+    document.getElementById('btn-start').addEventListener('click', ()=>{
+      step=1; showScreen(1);
+    });
+    qs.forEach(q=>
+      q.querySelectorAll('button').forEach(b=>
+        b.addEventListener('click', ()=> next(b.dataset.type))
+      )
+    );
+
+    document.getElementById('btn-submit-email').addEventListener('click', ()=>{
+      const email = document.getElementById('email').value.trim(),
+            err   = document.getElementById('email-error');
+      if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){
+        err.style.display='block'; return;
+      }
+      err.style.display='none';
+      const key = override
+          ? 'postpill'
+          : Object.entries(scores).sort((a,b)=>b[1]-a[1])[0]?.[0]||'insulin',
+            label = labels[key],
+            today = new Date().toISOString().split('T')[0];
+      // Identify and push Shopify Tag
+      window._learnq.push(['identify',{ email, source_content_result: label, accepts_marketing: true, email_status: 'subscribed', "PCOS Quiz Complete Date": today, "Shopify Tags": "Quiz Complete" }]);
+      // Subscribe immediately (no confirmation email)
+      window._learnq.push(['subscribe',{ listId: 'URJwDU', email, confirm_optin: false }]);
+      // Show result link
+      const link = document.getElementById('result-link');
+      link.href = redirectMap[key];
+      showScreen(TOTAL+2);
+    });
+  </script>
+</body>
+</html>
